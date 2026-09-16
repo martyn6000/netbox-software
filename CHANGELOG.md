@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Initial release of NetBox Software Plugin. This is a **minor** release introducing basic functionality for managing netbox-software resources in NetBox.
 
 ### Added
-- Initial plugin structure with Netboxsoftware model
+- License Type model (name, description, color)
+- Software License model (manufacturer, license name, friendly name, SKU, per-license cost, license type)
 - Basic CRUD operations through NetBox UI
 - Change logging and journaling support
 - Custom fields and tags support

@@ -23,7 +23,7 @@ class NetboxsoftwareConfig(PluginConfig):
     author_email = "martynstanton@hotmail.com"
     version = __version__
     base_url = "netbox_software"
-    min_version = "4.5.0"
+    min_version = "4.3.0"
     max_version = "4.5.99"
     graphql_schema = "graphql.schema"
 

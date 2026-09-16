@@ -9,15 +9,13 @@ NetBox plugin for netbox-software.
 
 ## Features
 
-The features the plugin provides should be listed here. For example:
-
-- Manage netbox-software resources through NetBox UI
-- Track and organize netbox-software data with custom fields and tags
+- Track software License Types (name, description, color) for categorizing licenses
+- Track Software Licenses (manufacturer, license name, friendly name, SKU, per-license cost, license type)
 - REST API endpoints for programmatic access
 - GraphQL support for flexible data queries
 - Full change logging and journaling support
 - Integration with NetBox's permission system
-- Global search integration for finding netbox-software objects
+- Global search integration for finding license objects
 - Comprehensive filtering and table views
 
 ## Screenshots
@@ -27,27 +25,28 @@ _Screenshots will be added as features are developed._
 
 ## Compatibility
 
-This plugin requires **NetBox 4.5** or later.
+This plugin requires **NetBox 4.3** or later.
 
 | NetBox Version | Plugin Version |
 |----------------|----------------|
-|     4.5+       |      0.1.0     |
+|     4.3+       |      1.0       |
 
 For more detailed compatibility information, see [COMPATIBILITY.md](COMPATIBILITY.md).
 
 ## Dependencies
 
 This plugin requires:
-- NetBox 1.0 or later (NetBox 4.5+)
-- Python 3.12 or later
+- NetBox 4.3 or later
+- Python 3.10 or later
 
 No additional Python packages are required beyond NetBox's core dependencies.
 
 ## REST API
 
-This plugin provides a REST API endpoint for managing netbox-software resources:
+This plugin provides REST API endpoints for managing software license resources:
 
-- `/api/plugins/netbox_software/netbox-softwares/` - List and create Netboxsoftware objects
+- `/api/plugins/netbox_software/license-types/` - List and create License Type objects
+- `/api/plugins/netbox_software/software-licenses/` - List and create Software License objects
 
 
 ## GraphQL

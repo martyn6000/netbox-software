@@ -25,13 +25,15 @@ classifiers=[
     'Intended Audience :: Telecommunications Industry',
     'Natural Language :: English',
     'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
     'Programming Language :: Python :: 3.14',
     'Topic :: System :: Networking',
 ]
 
-requires-python = ">=3.12.0"
+requires-python = ">=3.10.0"
 
 [project.optional-dependencies]
 test = [
@@ -48,7 +50,7 @@ Tracker = "https://github.com/martyn6000/netbox-software/issues"
 
 [tool.ruff]
 line-length = 120
-target-version = "py312"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = [

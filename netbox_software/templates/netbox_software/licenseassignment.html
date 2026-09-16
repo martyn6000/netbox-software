@@ -1,18 +1,26 @@
 
 {% extends 'generic/object.html' %}
-{% load render_table from django_tables2 %}
+{% load helpers %}
 
 {% block content %}
   <div class="row mb-3">
     <div class="col col-md-6">
       <div class="card">
 
-        <h5 class="card-header">NetBox Software Plugin</h5>
+        <h5 class="card-header">License Assignment</h5>
 
         <table class="table table-hover attr-table">
           <tr>
-            <th scope="row">Name</th>
-            <td>{{ object.name }}</td>
+            <th scope="row">Software License</th>
+            <td>{{ object.software_license|linkify }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Object Type</th>
+            <td>{{ object.object_type }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Object</th>
+            <td>{{ object.assigned_object|linkify }}</td>
           </tr>
         </table>
       </div>
@@ -24,4 +32,3 @@
     </div>
   </div>
 {% endblock content %}
-

@@ -1,0 +1,54 @@
+
+{% extends 'generic/object.html' %}
+{% load helpers %}
+
+{% block content %}
+  <div class="row mb-3">
+    <div class="col col-md-6">
+      <div class="card">
+
+        <h5 class="card-header">Software License</h5>
+
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">Manufacturer</th>
+            <td>{{ object.manufacturer|linkify }}</td>
+          </tr>
+          <tr>
+            <th scope="row">License Name</th>
+            <td>{{ object.license_name }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Friendly Name</th>
+            <td>{{ object.friendly_name|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">License SKU</th>
+            <td>{{ object.license_sku }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Per License Cost</th>
+            <td>{{ object.per_license_cost|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">License Type</th>
+            <td>{{ object.license_type|linkify }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Assigned Licenses</th>
+            <td>
+              <a href="{% url 'plugins:netbox_software:licenseassignment_list' %}?software_license_id={{ object.pk }}">
+                {{ object.assignment_count }}
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+{% endblock content %}

@@ -2,167 +2,395 @@
 Test cases for NetBox Software Plugin views.
 """
 
+from dcim.models import Manufacturer, Site
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
-from ..models import Netboxsoftware
+from ..models import LicenseAssignment, LicenseType, SoftwareLicense
 from ..testing import PluginViewTestCase
 from ..testing.utils import disable_warnings, get_random_string
 
 
-class NetboxsoftwareViewTestCase(PluginViewTestCase):
-    """Test Netboxsoftware views."""
+class LicenseTypeViewTestCase(PluginViewTestCase):
+    """Test LicenseType views."""
 
     @classmethod
     def setUpTestData(cls):
-        """Set up test data for all tests."""
-        Netboxsoftware.objects.create(name='View Test 1')
-        Netboxsoftware.objects.create(name='View Test 2')
-        Netboxsoftware.objects.create(name='View Test 3')
+        LicenseType.objects.create(name="View Type 1")
+        LicenseType.objects.create(name="View Type 2")
+        LicenseType.objects.create(name="View Type 3")
 
     def setUp(self):
-        """Set up each test."""
         super().setUp()
-        self.base_url = 'plugins:netbox_software:netboxsoftware'
+        self.base_url = "plugins:netbox_software:licensetype"
 
-    def test_list_netboxsoftwares(self):
-        """Test Netboxsoftware list view."""
-        self.add_permissions('netbox_software.view_netboxsoftware')
+    def test_list_license_types(self):
+        self.add_permissions("netbox_software.view_licensetype")
 
-        url = reverse('plugins:netbox_software:netboxsoftware_list')
+        url = reverse("plugins:netbox_software:licensetype_list")
         response = self.client.get(url)
 
         self.assertHttpStatus(response, 200)
 
-    def test_list_netboxsoftwares_without_permission(self):
-        """Test Netboxsoftware list view without permission."""
-        url = reverse('plugins:netbox_software:netboxsoftware_list')
+    def test_list_license_types_without_permission(self):
+        url = reverse("plugins:netbox_software:licensetype_list")
 
-        with disable_warnings('django.request'):
+        with disable_warnings("django.request"):
             response = self.client.get(url)
             self.assertHttpStatus(response, 403)
 
-    def test_view_netboxsoftware(self):
-        """Test Netboxsoftware detail view."""
-        self.add_permissions('netbox_software.view_netboxsoftware')
+    def test_view_license_type(self):
+        self.add_permissions("netbox_software.view_licensetype")
 
-        instance = Netboxsoftware.objects.first()
-        url = reverse('plugins:netbox_software:netboxsoftware', kwargs={'pk': instance.pk})
+        instance = LicenseType.objects.first()
+        url = reverse("plugins:netbox_software:licensetype", kwargs={"pk": instance.pk})
         response = self.client.get(url)
 
         self.assertHttpStatus(response, 200)
-        self.assertEqual(response.context['object'], instance)
+        self.assertEqual(response.context["object"], instance)
 
-    def test_create_netboxsoftware(self):
-        """Test creating a Netboxsoftware via form."""
+    def test_create_license_type(self):
         self.add_permissions(
-            'netbox_software.add_netboxsoftware',
-            'netbox_software.view_netboxsoftware'
+            "netbox_software.add_licensetype",
+            "netbox_software.view_licensetype",
         )
 
-        url = reverse('plugins:netbox_software:netboxsoftware_add')
-        name = f'Created {get_random_string(10)}'
+        url = reverse("plugins:netbox_software:licensetype_add")
+        name = f"Created {get_random_string(10)}"
 
-        form_data = self.post_data({
-            'name': name,
-        })
+        form_data = self.post_data(
+            {
+                "name": name,
+                "color": "2196f3",
+            }
+        )
 
         response = self.client.post(url, form_data, follow=True)
         self.assertHttpStatus(response, 200)
 
-        # Verify object was created
-        instance = Netboxsoftware.objects.get(name=name)
+        instance = LicenseType.objects.get(name=name)
         self.assertEqual(instance.name, name)
 
-    def test_create_netboxsoftware_without_permission(self):
-        """Test creating a Netboxsoftware without permission."""
-        url = reverse('plugins:netbox_software:netboxsoftware_add')
+    def test_create_license_type_without_permission(self):
+        url = reverse("plugins:netbox_software:licensetype_add")
 
-        with disable_warnings('django.request'):
+        with disable_warnings("django.request"):
             response = self.client.get(url)
             self.assertHttpStatus(response, 403)
 
-    def test_edit_netboxsoftware(self):
-        """Test editing a Netboxsoftware via form."""
+    def test_edit_license_type(self):
         self.add_permissions(
-            'netbox_software.change_netboxsoftware',
-            'netbox_software.view_netboxsoftware'
+            "netbox_software.change_licensetype",
+            "netbox_software.view_licensetype",
         )
 
-        instance = Netboxsoftware.objects.first()
-        url = reverse('plugins:netbox_software:netboxsoftware_edit', kwargs={'pk': instance.pk})
+        instance = LicenseType.objects.first()
+        url = reverse("plugins:netbox_software:licensetype_edit", kwargs={"pk": instance.pk})
 
-        new_name = f'Edited {get_random_string(10)}'
-        form_data = self.post_data({
-            'name': new_name,
-        })
+        new_name = f"Edited {get_random_string(10)}"
+        form_data = self.post_data(
+            {
+                "name": new_name,
+                "color": instance.color,
+            }
+        )
 
         response = self.client.post(url, form_data, follow=True)
         self.assertHttpStatus(response, 200)
 
-        # Verify object was updated
         instance.refresh_from_db()
         self.assertEqual(instance.name, new_name)
 
-    def test_delete_netboxsoftware(self):
-        """Test deleting a Netboxsoftware."""
+    def test_delete_license_type(self):
         self.add_permissions(
-            'netbox_software.delete_netboxsoftware',
-            'netbox_software.view_netboxsoftware'
+            "netbox_software.delete_licensetype",
+            "netbox_software.view_licensetype",
         )
 
-        instance = Netboxsoftware.objects.first()
-        url = reverse('plugins:netbox_software:netboxsoftware_delete', kwargs={'pk': instance.pk})
+        instance = LicenseType.objects.first()
+        url = reverse("plugins:netbox_software:licensetype_delete", kwargs={"pk": instance.pk})
 
-        # Confirm deletion
-        response = self.client.post(url, {'confirm': True}, follow=True)
+        response = self.client.post(url, {"confirm": True}, follow=True)
         self.assertHttpStatus(response, 200)
 
-        # Verify object was deleted
-        self.assertFalse(
-            Netboxsoftware.objects.filter(pk=instance.pk).exists()
-        )
+        self.assertFalse(LicenseType.objects.filter(pk=instance.pk).exists())
 
-    def test_delete_netboxsoftware_without_permission(self):
-        """Test deleting a Netboxsoftware without permission."""
-        instance = Netboxsoftware.objects.first()
-        url = reverse('plugins:netbox_software:netboxsoftware_delete', kwargs={'pk': instance.pk})
+    def test_delete_license_type_without_permission(self):
+        instance = LicenseType.objects.first()
+        url = reverse("plugins:netbox_software:licensetype_delete", kwargs={"pk": instance.pk})
 
-        with disable_warnings('django.request'):
+        with disable_warnings("django.request"):
             response = self.client.get(url)
             self.assertHttpStatus(response, 403)
 
 
-class NetboxsoftwareFormTestCase(PluginViewTestCase):
-    """Test Netboxsoftware form validation."""
+class SoftwareLicenseViewTestCase(PluginViewTestCase):
+    """Test SoftwareLicense views."""
 
-    def setUp(self):
-        """Set up each test."""
-        super().setUp()
-        self.add_permissions(
-            'netbox_software.add_netboxsoftware',
-            'netbox_software.view_netboxsoftware'
+    @classmethod
+    def setUpTestData(cls):
+        cls.manufacturer = Manufacturer.objects.create(name="Acme Corp", slug="acme-corp")
+        cls.license_type = LicenseType.objects.create(name="Subscription")
+
+        SoftwareLicense.objects.create(
+            manufacturer=cls.manufacturer,
+            license_name="View License 1",
+            license_sku="SKU-1",
+            license_type=cls.license_type,
+        )
+        SoftwareLicense.objects.create(
+            manufacturer=cls.manufacturer,
+            license_name="View License 2",
+            license_sku="SKU-2",
         )
 
-    def test_form_validation_empty_name(self):
-        """Test form validation with empty name."""
-        url = reverse('plugins:netbox_software:netboxsoftware_add')
-        form_data = self.post_data({'name': ''})
+    def setUp(self):
+        super().setUp()
+        self.base_url = "plugins:netbox_software:softwarelicense"
+
+    def test_list_software_licenses(self):
+        self.add_permissions("netbox_software.view_softwarelicense")
+
+        url = reverse("plugins:netbox_software:softwarelicense_list")
+        response = self.client.get(url)
+
+        self.assertHttpStatus(response, 200)
+
+    def test_list_software_licenses_without_permission(self):
+        url = reverse("plugins:netbox_software:softwarelicense_list")
+
+        with disable_warnings("django.request"):
+            response = self.client.get(url)
+            self.assertHttpStatus(response, 403)
+
+    def test_view_software_license(self):
+        self.add_permissions("netbox_software.view_softwarelicense")
+
+        instance = SoftwareLicense.objects.first()
+        url = reverse("plugins:netbox_software:softwarelicense", kwargs={"pk": instance.pk})
+        response = self.client.get(url)
+
+        self.assertHttpStatus(response, 200)
+        self.assertEqual(response.context["object"], instance)
+
+    def test_create_software_license(self):
+        self.add_permissions(
+            "netbox_software.add_softwarelicense",
+            "netbox_software.view_softwarelicense",
+        )
+
+        url = reverse("plugins:netbox_software:softwarelicense_add")
+        license_name = f"Created {get_random_string(10)}"
+
+        form_data = self.post_data(
+            {
+                "manufacturer": self.manufacturer,
+                "license_name": license_name,
+                "license_sku": get_random_string(10),
+                "per_license_cost": "9.99",
+                "license_type": self.license_type,
+            }
+        )
+
+        response = self.client.post(url, form_data, follow=True)
+        self.assertHttpStatus(response, 200)
+
+        instance = SoftwareLicense.objects.get(license_name=license_name)
+        self.assertEqual(instance.license_name, license_name)
+
+    def test_create_software_license_without_permission(self):
+        url = reverse("plugins:netbox_software:softwarelicense_add")
+
+        with disable_warnings("django.request"):
+            response = self.client.get(url)
+            self.assertHttpStatus(response, 403)
+
+    def test_edit_software_license(self):
+        self.add_permissions(
+            "netbox_software.change_softwarelicense",
+            "netbox_software.view_softwarelicense",
+        )
+
+        instance = SoftwareLicense.objects.first()
+        url = reverse("plugins:netbox_software:softwarelicense_edit", kwargs={"pk": instance.pk})
+
+        new_name = f"Edited {get_random_string(10)}"
+        form_data = self.post_data(
+            {
+                "manufacturer": instance.manufacturer,
+                "license_name": new_name,
+                "license_sku": instance.license_sku,
+            }
+        )
+
+        response = self.client.post(url, form_data, follow=True)
+        self.assertHttpStatus(response, 200)
+
+        instance.refresh_from_db()
+        self.assertEqual(instance.license_name, new_name)
+
+    def test_delete_software_license(self):
+        self.add_permissions(
+            "netbox_software.delete_softwarelicense",
+            "netbox_software.view_softwarelicense",
+        )
+
+        instance = SoftwareLicense.objects.first()
+        url = reverse("plugins:netbox_software:softwarelicense_delete", kwargs={"pk": instance.pk})
+
+        response = self.client.post(url, {"confirm": True}, follow=True)
+        self.assertHttpStatus(response, 200)
+
+        self.assertFalse(SoftwareLicense.objects.filter(pk=instance.pk).exists())
+
+    def test_delete_software_license_without_permission(self):
+        instance = SoftwareLicense.objects.first()
+        url = reverse("plugins:netbox_software:softwarelicense_delete", kwargs={"pk": instance.pk})
+
+        with disable_warnings("django.request"):
+            response = self.client.get(url)
+            self.assertHttpStatus(response, 403)
+
+
+class SoftwareLicenseFormTestCase(PluginViewTestCase):
+    """Test SoftwareLicense form validation."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.manufacturer = Manufacturer.objects.create(name="Acme Corp", slug="acme-corp")
+
+    def setUp(self):
+        super().setUp()
+        self.add_permissions(
+            "netbox_software.add_softwarelicense",
+            "netbox_software.view_softwarelicense",
+        )
+
+    def test_form_validation_missing_manufacturer(self):
+        url = reverse("plugins:netbox_software:softwarelicense_add")
+        form_data = self.post_data(
+            {
+                "license_name": "Test",
+                "license_sku": "SKU-1",
+            }
+        )
 
         response = self.client.post(url, form_data)
         self.assertHttpStatus(response, 200)  # Form redisplay
 
-        # Should not create object
-        self.assertEqual(Netboxsoftware.objects.filter(name='').count(), 0)
+        self.assertEqual(SoftwareLicense.objects.filter(license_name="Test").count(), 0)
 
-    def test_form_validation_duplicate_name(self):
-        """Test form validation with duplicate name."""
-        Netboxsoftware.objects.create(name='Duplicate')
-
-        url = reverse('plugins:netbox_software:netboxsoftware_add')
-        form_data = self.post_data({'name': 'Duplicate'})
+    def test_form_validation_missing_required_fields(self):
+        url = reverse("plugins:netbox_software:softwarelicense_add")
+        form_data = self.post_data({"manufacturer": self.manufacturer})
 
         response = self.client.post(url, form_data)
         self.assertHttpStatus(response, 200)  # Form redisplay
 
-        # Should only have one instance with this name
-        self.assertEqual(Netboxsoftware.objects.filter(name='Duplicate').count(), 1)
+        self.assertEqual(SoftwareLicense.objects.count(), 0)
+
+
+class LicenseAssignmentViewTestCase(PluginViewTestCase):
+    """Test LicenseAssignment views."""
+
+    @classmethod
+    def setUpTestData(cls):
+        manufacturer = Manufacturer.objects.create(name="Acme Corp", slug="acme-corp")
+        cls.software_license = SoftwareLicense.objects.create(
+            manufacturer=manufacturer,
+            license_name="View License",
+            license_sku="SKU-1",
+        )
+        cls.site_type = ContentType.objects.get_for_model(Site)
+        cls.site_1 = Site.objects.create(name="Site 1", slug="site-1")
+        cls.site_2 = Site.objects.create(name="Site 2", slug="site-2")
+
+        LicenseAssignment.objects.create(
+            software_license=cls.software_license,
+            object_type=cls.site_type,
+            object_id=cls.site_1.pk,
+        )
+
+    def setUp(self):
+        super().setUp()
+        self.base_url = "plugins:netbox_software:licenseassignment"
+
+    def test_list_license_assignments(self):
+        self.add_permissions("netbox_software.view_licenseassignment")
+
+        url = reverse("plugins:netbox_software:licenseassignment_list")
+        response = self.client.get(url)
+
+        self.assertHttpStatus(response, 200)
+
+    def test_list_license_assignments_without_permission(self):
+        url = reverse("plugins:netbox_software:licenseassignment_list")
+
+        with disable_warnings("django.request"):
+            response = self.client.get(url)
+            self.assertHttpStatus(response, 403)
+
+    def test_view_license_assignment(self):
+        self.add_permissions("netbox_software.view_licenseassignment")
+
+        instance = LicenseAssignment.objects.first()
+        url = reverse("plugins:netbox_software:licenseassignment", kwargs={"pk": instance.pk})
+        response = self.client.get(url)
+
+        self.assertHttpStatus(response, 200)
+        self.assertEqual(response.context["object"], instance)
+
+    def test_create_license_assignment(self):
+        self.add_permissions(
+            "netbox_software.add_licenseassignment",
+            "netbox_software.view_licenseassignment",
+        )
+
+        url = reverse("plugins:netbox_software:licenseassignment_add")
+        form_data = self.post_data(
+            {
+                "software_license": self.software_license,
+                "object_type": self.site_type,
+                "object_id": self.site_2.pk,
+            }
+        )
+
+        response = self.client.post(url, form_data, follow=True)
+        self.assertHttpStatus(response, 200)
+
+        self.assertTrue(
+            LicenseAssignment.objects.filter(
+                software_license=self.software_license,
+                object_type=self.site_type,
+                object_id=self.site_2.pk,
+            ).exists()
+        )
+
+    def test_create_license_assignment_without_permission(self):
+        url = reverse("plugins:netbox_software:licenseassignment_add")
+
+        with disable_warnings("django.request"):
+            response = self.client.get(url)
+            self.assertHttpStatus(response, 403)
+
+    def test_delete_license_assignment(self):
+        self.add_permissions(
+            "netbox_software.delete_licenseassignment",
+            "netbox_software.view_licenseassignment",
+        )
+
+        instance = LicenseAssignment.objects.first()
+        url = reverse("plugins:netbox_software:licenseassignment_delete", kwargs={"pk": instance.pk})
+
+        response = self.client.post(url, {"confirm": True}, follow=True)
+        self.assertHttpStatus(response, 200)
+
+        self.assertFalse(LicenseAssignment.objects.filter(pk=instance.pk).exists())
+
+    def test_delete_license_assignment_without_permission(self):
+        instance = LicenseAssignment.objects.first()
+        url = reverse("plugins:netbox_software:licenseassignment_delete", kwargs={"pk": instance.pk})
+
+        with disable_warnings("django.request"):
+            response = self.client.get(url)
+            self.assertHttpStatus(response, 403)

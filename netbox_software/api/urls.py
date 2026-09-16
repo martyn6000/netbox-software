@@ -10,12 +10,13 @@ https://www.django-rest-framework.org/api-guide/routers/
 
 from netbox.api.routers import NetBoxRouter
 
-from .views import NetboxsoftwareViewSet
+from .views import LicenseAssignmentViewSet, LicenseTypeViewSet, SoftwareLicenseViewSet
 
 app_name = "netbox_software"
 
 router = NetBoxRouter()
-router.register("netbox-softwares", NetboxsoftwareViewSet)
+router.register("license-types", LicenseTypeViewSet)
+router.register("software-licenses", SoftwareLicenseViewSet)
+router.register("license-assignments", LicenseAssignmentViewSet)
 
 urlpatterns = router.urls
-

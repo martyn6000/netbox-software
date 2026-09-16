@@ -7,74 +7,45 @@ global search. See: https://docs.netbox.dev/en/stable/plugins/development/search
 
 from netbox.search import SearchIndex
 
-from .models import Netboxsoftware
+from .models import LicenseType, SoftwareLicense
 
 
-class NetboxsoftwareIndex(SearchIndex):
-    """
-    Search index for Netboxsoftware model.
+class LicenseTypeIndex(SearchIndex):
+    """Search index for LicenseType model."""
 
-    This enables Netboxsoftware objects to appear in NetBox's global
-    search results.
-    """
+    model = LicenseType
 
-    model = Netboxsoftware
-
-    # Fields to index for search with their weights
-    # Higher weight = higher priority in search results
-    #
-    # Weight Guidelines:
-    #   50   - Unique serialized attribute (e.g., asset_tag)
-    #   60   - Unique per related object (e.g., serial)
-    #   100  - Primary human identifier (e.g., name)
-    #   110  - Slug fields
-    #   200  - Secondary identifier
-    #   300  - Highly unique descriptive text
-    #   500  - Description field
-    #   1000 - Custom field default
-    #   2000 - Other discrete attributes
-    #   5000 - Comments field
     fields = (
-        ('name', 100),          # Primary identifier
-        # ('slug', 110),        # Uncomment if your model has a slug field
-        # ('description', 500), # Uncomment if your model has a description field
-        # ('comments', 5000),   # Uncomment if your model has a comments field
+        ("name", 100),
+        ("description", 500),
     )
 
-    # Optional: Fields to display in search results (not indexed, just shown)
-    # These help users identify the correct result
-    # Foreign key fields are automatically prefetched for efficiency
     display_attrs = (
-        # 'status',      # Example: Display status
-        # 'tenant',      # Example: Display tenant relationship
-        # 'description', # Example: Display description
+        "description",
+        "color",
     )
 
-    # Optional: Custom category label for grouping in search UI
-    # If not specified, defaults to the app's verbose name
-    # category = 'NetBox Software Plugin'
+
+class SoftwareLicenseIndex(SearchIndex):
+    """Search index for SoftwareLicense model."""
+
+    model = SoftwareLicense
+
+    fields = (
+        ("license_name", 100),
+        ("friendly_name", 200),
+        ("license_sku", 50),
+    )
+
+    display_attrs = (
+        "manufacturer",
+        "license_type",
+    )
 
 
 # Register all search indexes for this plugin
 # The PluginConfig will automatically load these indexes
 indexes = (
-    NetboxsoftwareIndex,
+    LicenseTypeIndex,
+    SoftwareLicenseIndex,
 )
-
-
-# Example: Multiple models with different search configurations
-#
-# class AnotherModelIndex(SearchIndex):
-#     """Search index for another model."""
-#     model = AnotherModel
-#     fields = (
-#         ('name', 100),
-#         ('identifier', 200),
-#         ('description', 500),
-#     )
-#     display_attrs = ('status', 'type')
-#
-# indexes = (
-#     NetboxsoftwareIndex,
-#     AnotherModelIndex,
-# )

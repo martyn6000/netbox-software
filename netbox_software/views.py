@@ -13,20 +13,58 @@ from netbox.views import generic
 from . import filtersets, forms, models, tables
 
 
-class NetboxsoftwareView(generic.ObjectView):
-    queryset = models.Netboxsoftware.objects.all()
+class LicenseTypeView(generic.ObjectView):
+    queryset = models.LicenseType.objects.all()
 
 
-class NetboxsoftwareListView(generic.ObjectListView):
-    queryset = models.Netboxsoftware.objects.all()
-    table = tables.NetboxsoftwareTable
-    filterset = filtersets.NetboxsoftwareFilterSet
+class LicenseTypeListView(generic.ObjectListView):
+    queryset = models.LicenseType.objects.all()
+    table = tables.LicenseTypeTable
+    filterset = filtersets.LicenseTypeFilterSet
 
 
-class NetboxsoftwareEditView(generic.ObjectEditView):
-    queryset = models.Netboxsoftware.objects.all()
-    form = forms.NetboxsoftwareForm
+class LicenseTypeEditView(generic.ObjectEditView):
+    queryset = models.LicenseType.objects.all()
+    form = forms.LicenseTypeForm
 
 
-class NetboxsoftwareDeleteView(generic.ObjectDeleteView):
-    queryset = models.Netboxsoftware.objects.all()
+class LicenseTypeDeleteView(generic.ObjectDeleteView):
+    queryset = models.LicenseType.objects.all()
+
+
+class SoftwareLicenseView(generic.ObjectView):
+    queryset = models.SoftwareLicense.objects.all()
+
+
+class SoftwareLicenseListView(generic.ObjectListView):
+    queryset = models.SoftwareLicense.objects.all()
+    table = tables.SoftwareLicenseTable
+    filterset = filtersets.SoftwareLicenseFilterSet
+
+
+class SoftwareLicenseEditView(generic.ObjectEditView):
+    queryset = models.SoftwareLicense.objects.all()
+    form = forms.SoftwareLicenseForm
+
+
+class SoftwareLicenseDeleteView(generic.ObjectDeleteView):
+    queryset = models.SoftwareLicense.objects.all()
+
+
+class LicenseAssignmentView(generic.ObjectView):
+    queryset = models.LicenseAssignment.objects.all()
+
+
+class LicenseAssignmentListView(generic.ObjectListView):
+    queryset = models.LicenseAssignment.objects.all()
+    table = tables.LicenseAssignmentTable
+    filterset = filtersets.LicenseAssignmentFilterSet
+
+
+class LicenseAssignmentEditView(generic.ObjectEditView):
+    queryset = models.LicenseAssignment.objects.all()
+    form = forms.LicenseAssignmentForm
+
+
+class LicenseAssignmentDeleteView(generic.ObjectDeleteView):
+    queryset = models.LicenseAssignment.objects.all()

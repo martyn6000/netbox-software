@@ -10,11 +10,24 @@ https://www.django-rest-framework.org/api-guide/viewsets/
 
 from netbox.api.viewsets import NetBoxModelViewSet
 
-from ..models import Netboxsoftware
-from .serializers import NetboxsoftwareSerializer
+from .. import filtersets
+from ..models import LicenseAssignment, LicenseType, SoftwareLicense
+from .serializers import LicenseAssignmentSerializer, LicenseTypeSerializer, SoftwareLicenseSerializer
 
 
-class NetboxsoftwareViewSet(NetBoxModelViewSet):
-    queryset = Netboxsoftware.objects.all()
-    serializer_class = NetboxsoftwareSerializer
+class LicenseTypeViewSet(NetBoxModelViewSet):
+    queryset = LicenseType.objects.all()
+    serializer_class = LicenseTypeSerializer
+    filterset_class = filtersets.LicenseTypeFilterSet
 
+
+class SoftwareLicenseViewSet(NetBoxModelViewSet):
+    queryset = SoftwareLicense.objects.all()
+    serializer_class = SoftwareLicenseSerializer
+    filterset_class = filtersets.SoftwareLicenseFilterSet
+
+
+class LicenseAssignmentViewSet(NetBoxModelViewSet):
+    queryset = LicenseAssignment.objects.all()
+    serializer_class = LicenseAssignmentSerializer
+    filterset_class = filtersets.LicenseAssignmentFilterSet
