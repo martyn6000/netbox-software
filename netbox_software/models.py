@@ -17,6 +17,8 @@ from netbox.choices import ColorChoices
 from netbox.models import NetBoxModel
 from utilities.fields import ColorField
 
+from .constants import CONTRACTS_INSTALLED
+
 
 class LicenseType(NetBoxModel):
     name = models.CharField(max_length=100, unique=True)
@@ -59,6 +61,15 @@ class SoftwareLicense(NetBoxModel):
         blank=True,
         null=True,
     )
+    if CONTRACTS_INSTALLED:
+        local_currency = models.ForeignKey(
+            to="netbox_contracts.Currency",
+            on_delete=models.SET_NULL,
+            related_name="software_licenses",
+            blank=True,
+            null=True,
+            help_text="Currency code from the contracts plugin",
+        )
 
     class Meta:
         app_label = "netbox_software"

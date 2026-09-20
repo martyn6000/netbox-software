@@ -14,6 +14,7 @@ from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
 from utilities.filters import ContentTypeFilter
 
+from .constants import CONTRACTS_INSTALLED
 from .models import LicenseAssignment, LicenseType, SoftwareLicense
 
 
@@ -37,6 +38,13 @@ class SoftwareLicenseFilterSet(NetBoxModelFilterSet):
         queryset=LicenseType.objects.all(),
         label="License Type (ID)",
     )
+    if CONTRACTS_INSTALLED:
+        from netbox_contracts.models import Currency
+
+        local_currency_id = django_filters.ModelMultipleChoiceFilter(
+            queryset=Currency.objects.all(),
+            label="Local Currency (ID)",
+        )
 
     class Meta:
         model = SoftwareLicense
@@ -47,6 +55,7 @@ class SoftwareLicenseFilterSet(NetBoxModelFilterSet):
             "license_sku",
             "manufacturer_id",
             "license_type_id",
+            *(("local_currency_id",) if CONTRACTS_INSTALLED else ()),
         )
 
     def search(self, queryset, name, value):

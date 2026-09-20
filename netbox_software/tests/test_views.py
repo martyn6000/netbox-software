@@ -2,7 +2,10 @@
 Test cases for NetBox Software Plugin views.
 """
 
+from unittest import skipUnless
+
 from dcim.models import Manufacturer, Site
+from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
@@ -394,3 +397,41 @@ class LicenseAssignmentViewTestCase(PluginViewTestCase):
         with disable_warnings("django.request"):
             response = self.client.get(url)
             self.assertHttpStatus(response, 403)
+
+
+@skipUnless(apps.is_installed("netbox_contracts"), "netbox_contracts is not installed")
+class SoftwareLicenseContractsTabTestCase(PluginViewTestCase):
+    """Test the optional Contracts tab on the Software License page."""
+
+    @classmethod
+    def setUpTestData(cls):
+        manufacturer = Manufacturer.objects.create(name="Acme Corp", slug="acme-corp")
+        cls.software_license = SoftwareLicense.objects.create(
+            manufacturer=manufacturer,
+            license_name="Tab License",
+            license_sku="SKU-1",
+        )
+
+    def test_tab_visible_with_no_assignments(self):
+        self.add_permissions(
+            "netbox_software.view_softwarelicense",
+            "netbox_contracts.view_contractassignment",
+        )
+
+        detail_url = reverse("plugins:netbox_software:softwarelicense", kwargs={"pk": self.software_license.pk})
+        tab_url = reverse("plugins:netbox_software:softwarelicense_contracts", kwargs={"pk": self.software_license.pk})
+
+        response = self.client.get(detail_url)
+        self.assertHttpStatus(response, 200)
+        self.assertContains(response, tab_url)
+
+    def test_contracts_tab_renders(self):
+        self.add_permissions(
+            "netbox_software.view_softwarelicense",
+            "netbox_contracts.view_contractassignment",
+        )
+
+        url = reverse("plugins:netbox_software:softwarelicense_contracts", kwargs={"pk": self.software_license.pk})
+        response = self.client.get(url)
+
+        self.assertHttpStatus(response, 200)

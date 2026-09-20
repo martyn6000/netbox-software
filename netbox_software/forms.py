@@ -14,6 +14,7 @@ from utilities.forms import get_field_value
 from utilities.forms.fields import ContentTypeChoiceField, DynamicModelChoiceField
 from utilities.forms.widgets import HTMXSelect
 
+from .constants import CONTRACTS_INSTALLED
 from .models import LicenseAssignment, LicenseType, SoftwareLicense
 
 
@@ -33,6 +34,15 @@ class SoftwareLicenseForm(NetBoxModelForm):
         required=False,
         label="License Type",
     )
+    if CONTRACTS_INSTALLED:
+        from netbox_contracts.models import Currency
+
+        local_currency = DynamicModelChoiceField(
+            queryset=Currency.objects.all(),
+            required=False,
+            label="Local Currency",
+            context={"label": "currency_code"},
+        )
 
     class Meta:
         model = SoftwareLicense
@@ -42,6 +52,7 @@ class SoftwareLicenseForm(NetBoxModelForm):
             "friendly_name",
             "license_sku",
             "per_license_cost",
+            *(("local_currency",) if CONTRACTS_INSTALLED else ()),
             "license_type",
             "tags",
         )

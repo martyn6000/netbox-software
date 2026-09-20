@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Annotated
 import strawberry
 import strawberry_django
 
+from .constants import CONTRACTS_INSTALLED
 from .models import LicenseAssignment, LicenseType, SoftwareLicense
 
 if TYPE_CHECKING:
@@ -29,10 +30,11 @@ class LicenseTypeType:
     color: str
 
 
-@strawberry_django.type(
-    SoftwareLicense,
-    fields="__all__",
-)
+# local_currency points at a model from another plugin, which has no GraphQL type registered here
+_software_license_type_options = {"exclude": ["local_currency"]} if CONTRACTS_INSTALLED else {"fields": "__all__"}
+
+
+@strawberry_django.type(SoftwareLicense, **_software_license_type_options)
 class SoftwareLicenseType:
     """GraphQL type for SoftwareLicense model."""
 

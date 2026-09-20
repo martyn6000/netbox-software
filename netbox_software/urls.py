@@ -63,3 +63,13 @@ urlpatterns = (
         kwargs={"model": models.LicenseAssignment},
     ),
 )
+
+# Present only when netbox_contracts is installed (see views.py)
+if hasattr(views, "SoftwareLicenseContractsView"):
+    urlpatterns += (
+        path(
+            "software-licenses/<int:pk>/contracts/",
+            views.SoftwareLicenseContractsView.as_view(),
+            name="softwarelicense_contracts",
+        ),
+    )

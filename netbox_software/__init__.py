@@ -1,7 +1,7 @@
 """
-NetBox Software Plugin
+SCB Software Plugin
 
-Plugin configuration for NetBox Software Plugin.
+Plugin configuration for SCB Software Plugin.
 
 For a complete list of PluginConfig attributes, see:
 https://docs.netbox.dev/en/stable/plugins/development/#pluginconfig-attributes
@@ -17,8 +17,8 @@ from netbox.plugins import PluginConfig
 
 class NetboxsoftwareConfig(PluginConfig):
     name = "netbox_software"
-    verbose_name = "NetBox Software Plugin"
-    description = "NetBox plugin for netbox-software."
+    verbose_name = "SCB Software Plugin"
+    description = "SCB plugin for netbox-software."
     author= "Martyn Stanton"
     author_email = "martynstanton@hotmail.com"
     version = __version__

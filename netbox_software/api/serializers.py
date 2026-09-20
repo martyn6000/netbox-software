@@ -20,6 +20,7 @@ from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from utilities.api import get_serializer_for_model
 
+from ..constants import CONTRACTS_INSTALLED
 from ..models import LicenseAssignment, LicenseType, SoftwareLicense
 
 
@@ -48,6 +49,10 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
     manufacturer = ManufacturerSerializer(nested=True, required=True, allow_null=False)
     license_type = LicenseTypeSerializer(nested=True, required=False, allow_null=True)
     assignment_count = serializers.IntegerField(read_only=True)
+    if CONTRACTS_INSTALLED:
+        from netbox_contracts.api.serializers import CurrencySerializer
+
+        local_currency = CurrencySerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
         model = SoftwareLicense
@@ -60,6 +65,7 @@ class SoftwareLicenseSerializer(NetBoxModelSerializer):
             "friendly_name",
             "license_sku",
             "per_license_cost",
+            *(("local_currency",) if CONTRACTS_INSTALLED else ()),
             "license_type",
             "assignment_count",
             "tags",

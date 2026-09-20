@@ -9,8 +9,10 @@ https://django-tables2.readthedocs.io/
 """
 
 import django_tables2 as tables
+from django.urls import reverse
 from netbox.tables import NetBoxTable, columns
 
+from .constants import CONTRACTS_INSTALLED
 from .models import LicenseAssignment, LicenseType, SoftwareLicense
 
 
@@ -34,6 +36,16 @@ class SoftwareLicenseTable(NetBoxTable):
         verbose_name="Assigned Licenses",
         orderable=False,
     )
+    if CONTRACTS_INSTALLED:
+        local_currency = tables.Column(
+            accessor="local_currency.currency_code",
+            verbose_name="Local Currency",
+            linkify=lambda record: (
+                reverse("plugins:netbox_contracts:currency", args=[record.local_currency_id])
+                if record.local_currency_id
+                else None
+            ),
+        )
 
     class Meta(NetBoxTable.Meta):
         model = SoftwareLicense
@@ -45,6 +57,7 @@ class SoftwareLicenseTable(NetBoxTable):
             "friendly_name",
             "license_sku",
             "per_license_cost",
+            *(("local_currency",) if CONTRACTS_INSTALLED else ()),
             "license_type",
             "assignment_count",
             "actions",
@@ -55,6 +68,7 @@ class SoftwareLicenseTable(NetBoxTable):
             "friendly_name",
             "license_sku",
             "per_license_cost",
+            *(("local_currency",) if CONTRACTS_INSTALLED else ()),
             "license_type",
             "assignment_count",
         )

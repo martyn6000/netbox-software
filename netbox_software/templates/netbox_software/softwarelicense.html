@@ -30,6 +30,18 @@
             <th scope="row">Per License Cost</th>
             <td>{{ object.per_license_cost|placeholder }}</td>
           </tr>
+          {% if contracts_installed %}
+          <tr>
+            <th scope="row">Local Currency</th>
+            <td>
+              {% if object.local_currency %}
+                <a href="{% url 'plugins:netbox_contracts:currency' pk=object.local_currency.pk %}">{{ object.local_currency.currency_code }}</a>
+              {% else %}
+                {{ ''|placeholder }}
+              {% endif %}
+            </td>
+          </tr>
+          {% endif %}
           <tr>
             <th scope="row">License Type</th>
             <td>{{ object.license_type|linkify }}</td>

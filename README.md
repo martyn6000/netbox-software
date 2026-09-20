@@ -1,6 +1,6 @@
-# NetBox Software Plugin
+# SCB Software Plugin
 
-NetBox plugin for netbox-software.
+SCB plugin for netbox-software.
 
 
 * Free software: Apache-2.0
